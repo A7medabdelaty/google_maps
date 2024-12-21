@@ -11,6 +11,8 @@ class GoogleMapView extends StatefulWidget {
 class _GoogleMapViewState extends State<GoogleMapView> {
   late CameraPosition initialCameraPosition;
 
+  late GoogleMapController mapController;
+
   @override
   void initState() {
     initialCameraPosition = CameraPosition(
@@ -22,14 +24,33 @@ class _GoogleMapViewState extends State<GoogleMapView> {
 
   @override
   Widget build(BuildContext context) {
-    return GoogleMap(
-      cameraTargetBounds: CameraTargetBounds(
-        LatLngBounds(
-          southwest: LatLng(21.999299540452224, 24.968977091465547),
-          northeast: LatLng(31.328894771153053, 34.19815133092022),
+    return Stack(
+      alignment: AlignmentDirectional.bottomCenter,
+      children: [
+        GoogleMap(
+          cameraTargetBounds: CameraTargetBounds(
+            LatLngBounds(
+              southwest: LatLng(21.999299540452224, 24.968977091465547),
+              northeast: LatLng(31.328894771153053, 34.19815133092022),
+            ),
+          ),
+          onMapCreated: (GoogleMapController controller) {
+            mapController = controller;
+          },
+          initialCameraPosition: initialCameraPosition,
         ),
-      ),
-      initialCameraPosition: initialCameraPosition,
+        ElevatedButton(
+          onPressed: () {
+            mapController.animateCamera(
+              CameraUpdate.newLatLng(
+                LatLng(30.54784687684049, 31.12807335054871),
+              ),
+            );
+            setState(() {});
+          },
+          child: Text('Navigate to Home'),
+        ),
+      ],
     );
   }
 }

@@ -23,6 +23,12 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   @override
   Widget build(BuildContext context) {
     return GoogleMap(
+      cameraTargetBounds: CameraTargetBounds(
+        LatLngBounds(
+          southwest: LatLng(21.999299540452224, 24.968977091465547),
+          northeast: LatLng(31.328894771153053, 34.19815133092022),
+        ),
+      ),
       initialCameraPosition: initialCameraPosition,
     );
   }

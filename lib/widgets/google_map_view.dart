@@ -13,6 +13,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   late CameraPosition initialCameraPosition;
 
   late GoogleMapController mapController;
+  LatLng homeLocation = LatLng(30.54784687684049, 31.12807335054871);
 
   @override
   void initState() {
@@ -21,8 +22,11 @@ class _GoogleMapViewState extends State<GoogleMapView> {
       zoom: 12,
     );
     initMapStyle();
+    //initMapMarkers();
     super.initState();
   }
+
+  Set<Marker> mapMarkers = {};
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +34,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
       alignment: AlignmentDirectional.bottomCenter,
       children: [
         GoogleMap(
+          markers: mapMarkers,
           cameraTargetBounds: CameraTargetBounds(
             LatLngBounds(
               southwest: LatLng(21.999299540452224, 24.968977091465547),
@@ -44,16 +49,23 @@ class _GoogleMapViewState extends State<GoogleMapView> {
         ),
         ElevatedButton(
           onPressed: () {
-            mapController.animateCamera(
-              CameraUpdate.newLatLng(
-                LatLng(30.54784687684049, 31.12807335054871),
-              ),
-            );
-            setState(() {});
+            navigateToHome();
           },
           child: Text('Navigate to Home'),
         ),
       ],
+    );
+  }
+
+  void navigateToHome() {
+    initMapMarkers();
+    mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: homeLocation,
+          zoom: 15,
+        ),
+      ),
     );
   }
 
@@ -63,5 +75,19 @@ class _GoogleMapViewState extends State<GoogleMapView> {
         mapController.setMapStyle(string);
       },
     );
+  }
+
+  void initMapMarkers() {
+    mapMarkers.add(
+      Marker(
+        markerId: MarkerId('marker one'),
+        position: homeLocation,
+        infoWindow: InfoWindow(
+          title: 'Home',
+          snippet: 'This is my home',
+        ),
+      ),
+    );
+    setState(() {});
   }
 }

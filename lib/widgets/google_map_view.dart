@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class GoogleMapView extends StatefulWidget {
@@ -19,6 +20,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
       target: LatLng(30.54784687684049, 31.12807335054871),
       zoom: 12,
     );
+    initMapStyle();
     super.initState();
   }
 
@@ -36,6 +38,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
           ),
           onMapCreated: (GoogleMapController controller) {
             mapController = controller;
+            initMapStyle();
           },
           initialCameraPosition: initialCameraPosition,
         ),
@@ -51,6 +54,14 @@ class _GoogleMapViewState extends State<GoogleMapView> {
           child: Text('Navigate to Home'),
         ),
       ],
+    );
+  }
+
+  void initMapStyle() {
+    rootBundle.loadString('assets/map_styles/dark_map_style.json').then(
+      (string) {
+        mapController.setMapStyle(string);
+      },
     );
   }
 }

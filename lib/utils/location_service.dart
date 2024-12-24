@@ -1,37 +1,18 @@
-import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 late LocationPermission locationPermission;
 
 class LocationService {
-  void initLocationService(BuildContext context) {
-    requestLocationService(context: context);
-    requestLocationPermission();
-  }
-
-  void requestLocationService({required context}) async {
-    var value = await Geolocator.isLocationServiceEnabled();
-    if (!value) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            insetPadding: EdgeInsets.all(8.0),
-            title: Text('Location Service is Disabled'),
-            content: Text('Please enable location service to continue'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Geolocator.openLocationSettings();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
+  Future<bool> requestLocationService() async {
+    bool isLocationEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!isLocationEnabled) {
+      await Geolocator.openLocationSettings();
+      isLocationEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!isLocationEnabled) {
+        return false;
+      }
     }
+    return true;
   }
 
   Future<bool> requestLocationPermission() async {

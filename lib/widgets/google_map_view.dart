@@ -23,8 +23,6 @@ class _GoogleMapViewState extends State<GoogleMapView> {
     initCameraPosition();
     initMapStyle();
     initMapIconImage();
-    locationService = LocationService();
-    locationService.initLocationService(context);
     super.initState();
   }
 

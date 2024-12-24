@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_maps/utils/location_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class GoogleMapView extends StatefulWidget {
@@ -13,6 +14,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   late CameraPosition initialCameraPosition;
   late GoogleMapController mapController;
   late BitmapDescriptor icon;
+  late LocationService locationService;
   LatLng homeLocation = LatLng(30.54784687684049, 31.12807335054871);
   Set<Marker> mapMarkers = {};
 
@@ -21,6 +23,8 @@ class _GoogleMapViewState extends State<GoogleMapView> {
     initCameraPosition();
     initMapStyle();
     initMapIconImage();
+    locationService = LocationService();
+    locationService.initLocationService(context);
     super.initState();
   }
 

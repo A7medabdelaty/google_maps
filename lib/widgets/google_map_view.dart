@@ -11,22 +11,18 @@ class GoogleMapView extends StatefulWidget {
 
 class _GoogleMapViewState extends State<GoogleMapView> {
   late CameraPosition initialCameraPosition;
-
   late GoogleMapController mapController;
+  late BitmapDescriptor icon;
   LatLng homeLocation = LatLng(30.54784687684049, 31.12807335054871);
+  Set<Marker> mapMarkers = {};
 
   @override
   void initState() {
-    initialCameraPosition = CameraPosition(
-      target: LatLng(30.54784687684049, 31.12807335054871),
-      zoom: 12,
-    );
+    initCameraPosition();
     initMapStyle();
-    //initMapMarkers();
+    initMapIconImage();
     super.initState();
   }
-
-  Set<Marker> mapMarkers = {};
 
   @override
   Widget build(BuildContext context) {
@@ -57,15 +53,19 @@ class _GoogleMapViewState extends State<GoogleMapView> {
     );
   }
 
-  void navigateToHome() {
-    initMapMarkers();
-    mapController.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: homeLocation,
-          zoom: 15,
-        ),
+  void initCameraPosition() {
+    initialCameraPosition = CameraPosition(
+      target: LatLng(30.54784687684049, 31.12807335054871),
+      zoom: 12,
+    );
+  }
+
+  void initMapIconImage() async {
+    icon = await BitmapDescriptor.asset(
+      ImageConfiguration(
+        size: Size(15, 18),
       ),
+      'assets/images/google_map_icon.jpg',
     );
   }
 
@@ -77,9 +77,22 @@ class _GoogleMapViewState extends State<GoogleMapView> {
     );
   }
 
-  void initMapMarkers() {
+  void navigateToHome() {
+    addHomeMarker();
+    mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: homeLocation,
+          zoom: 15,
+        ),
+      ),
+    );
+  }
+
+  void addHomeMarker() async {
     mapMarkers.add(
       Marker(
+        icon: icon,
         markerId: MarkerId('marker one'),
         position: homeLocation,
         infoWindow: InfoWindow(

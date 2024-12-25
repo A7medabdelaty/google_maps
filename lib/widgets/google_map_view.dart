@@ -22,41 +22,33 @@ class _GoogleMapViewState extends State<GoogleMapView> {
 
   @override
   void initState() {
+    initMap();
+    locationService = LocationService();
+    userLocationTracking();
+    super.initState();
+  }
+
+  void initMap() {
     initCameraPosition();
     initMapStyle();
     initMapIconImage();
-    locationService = LocationService();
-    updateCameraLocation();
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: AlignmentDirectional.bottomCenter,
-      children: [
-        GoogleMap(
-          markers: mapMarkers,
-          onMapCreated: (GoogleMapController controller) {
-            mapController = controller;
-            initMapStyle();
-          },
-          initialCameraPosition: initialCameraPosition,
-        ),
-        ElevatedButton(
-          onPressed: () {
-            navigateToHome();
-          },
-          child: Text('Navigate to Home'),
-        ),
-      ],
+    return GoogleMap(
+      markers: mapMarkers,
+      onMapCreated: (GoogleMapController controller) {
+        mapController = controller;
+        initMapStyle();
+      },
+      initialCameraPosition: initialCameraPosition,
     );
   }
 
   void initCameraPosition() {
     initialCameraPosition = CameraPosition(
-      target: LatLng(30.54784687684049, 31.12807335054871),
-      zoom: 12,
+      target: LatLng(0,0),
     );
   }
 
@@ -77,34 +69,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
     );
   }
 
-  void navigateToHome() {
-    addHomeMarker();
-    mapController.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: homeLocation,
-          zoom: 15,
-        ),
-      ),
-    );
-  }
-
-  void addHomeMarker() async {
-    mapMarkers.add(
-      Marker(
-        icon: icon,
-        markerId: MarkerId('marker one'),
-        position: homeLocation,
-        infoWindow: InfoWindow(
-          title: 'Home',
-          snippet: 'This is my home',
-        ),
-      ),
-    );
-    setState(() {});
-  }
-
-  void updateCameraLocation() async {
+  void userLocationTracking() async {
     await locationService.requestLocationService();
     var hasLocationPermission =
         await locationService.requestLocationPermission();

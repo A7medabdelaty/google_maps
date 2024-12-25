@@ -37,12 +37,6 @@ class _GoogleMapViewState extends State<GoogleMapView> {
       children: [
         GoogleMap(
           markers: mapMarkers,
-          cameraTargetBounds: CameraTargetBounds(
-            LatLngBounds(
-              southwest: LatLng(21.999299540452224, 24.968977091465547),
-              northeast: LatLng(31.328894771153053, 34.19815133092022),
-            ),
-          ),
           onMapCreated: (GoogleMapController controller) {
             mapController = controller;
             initMapStyle();
@@ -118,12 +112,14 @@ class _GoogleMapViewState extends State<GoogleMapView> {
       locationService.getLocationStream(
         (positionData) {
           navigateToCurrentLocation(positionData);
+          addLocationMarker(positionData);
         },
       );
     }
   }
 
   var firstCall = true;
+
   void navigateToCurrentLocation(Position positionData) {
     if (firstCall) {
       mapController.animateCamera(
@@ -148,5 +144,23 @@ class _GoogleMapViewState extends State<GoogleMapView> {
         ),
       ),
     );
+  }
+
+  void addLocationMarker(Position positionData) {
+    mapMarkers.add(
+      Marker(
+        icon: icon,
+        markerId: MarkerId('marker two'),
+        position: LatLng(
+          positionData.latitude,
+          positionData.longitude,
+        ),
+        infoWindow: InfoWindow(
+          title: 'Current Location',
+          snippet: 'This is your current location',
+        ),
+      ),
+    );
+    setState(() {});
   }
 }

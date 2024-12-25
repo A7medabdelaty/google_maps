@@ -27,7 +27,7 @@ class LocationService {
     return true;
   }
 
-  getLocationStream() {
-    Geolocator.getPositionStream().listen((Position position) {});
+  void getLocationStream(void Function(Position)? onData) {
+    Geolocator.getPositionStream().listen(onData);
   }
 }

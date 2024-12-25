@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps/utils/location_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -15,6 +16,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   late GoogleMapController mapController;
   late BitmapDescriptor icon;
   late LocationService locationService;
+
   LatLng homeLocation = LatLng(30.54784687684049, 31.12807335054871);
   Set<Marker> mapMarkers = {};
 
@@ -23,6 +25,8 @@ class _GoogleMapViewState extends State<GoogleMapView> {
     initCameraPosition();
     initMapStyle();
     initMapIconImage();
+    locationService = LocationService();
+    updateCameraLocation();
     super.initState();
   }
 
@@ -104,5 +108,45 @@ class _GoogleMapViewState extends State<GoogleMapView> {
       ),
     );
     setState(() {});
+  }
+
+  void updateCameraLocation() async {
+    await locationService.requestLocationService();
+    var hasLocationPermission =
+        await locationService.requestLocationPermission();
+    if (hasLocationPermission) {
+      locationService.getLocationStream(
+        (positionData) {
+          navigateToCurrentLocation(positionData);
+        },
+      );
+    }
+  }
+
+  var firstCall = true;
+  void navigateToCurrentLocation(Position positionData) {
+    if (firstCall) {
+      mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(
+              positionData.latitude,
+              positionData.longitude,
+            ),
+            zoom: 15,
+          ),
+        ),
+      );
+      firstCall = false;
+      return;
+    }
+    mapController.animateCamera(
+      CameraUpdate.newLatLng(
+        LatLng(
+          positionData.latitude,
+          positionData.longitude,
+        ),
+      ),
+    );
   }
 }
